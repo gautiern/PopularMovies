@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+
+    <!-- Settings Menu -->
+    <string name="settings">Settings</string>
+
+    <!-- Detail Activity strings -->
+    <string name="rating_label">Viewer Rating:</string>
+    <string name="release_date">Release Date:</string>
+
+    <!-- Preferences strings -->
+    <string name="pref_sort_label">Select Sort</string>
+    <string name="most_popular_label">Most Popular</string>
+    <string name="top_rated_label">Top Rated</string>
+
+    <string name="pref_sort_key" translatable="false">sort</string>
+    <string name="pref_most_popular" translatable="false">popular</string>
+    <string name="pref_top_rated" translatable="false">top_rated</string>
+
+
+    <!-- TMDB API strings -->
+    <string name="tmdb_base_url" translatable="false">http://image.tmdb.org/t/p/</string>
+    <string name="normal_poster_size" translatable="false">"w342"</string>
+    <string name="large_poster_size" translatable="false">w500</string>
+
+</resources>

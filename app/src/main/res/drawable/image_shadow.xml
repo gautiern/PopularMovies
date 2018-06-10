@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  Referenced Stackoverflow for drop shadow snippet
+       URL: https://stackoverflow.com/questions/24095223/android-
+       linearlayout-add-border-with-shadow-around-a-linearlayout
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
+
+    <item>
+        <shape>
+            <!-- set the shadow color here -->
+            <stroke
+                android:width="3dp"
+                android:color="#7000" />
+
+            <!-- setting the thickness of shadow (positive value will give shadow on that side) -->
+
+            <padding
+                android:bottom="3dp"
+                android:left="3dp"
+                android:right="-1dp"
+                android:top="-1dp" />
+
+            <corners android:radius="3dp" />
+        </shape>
+    </item>
+
+    <!-- Background -->
+
+    <item>
+        <shape>
+            <solid android:color="#fff" />
+            <corners android:radius="3dp" />
+        </shape>
+    </item>
+</layer-list>
