@@ -1,6 +1,8 @@
 package com.example.garbu.popularmovies.utils;
 
 import com.example.garbu.popularmovies.model.MovieResponse;
+import com.example.garbu.popularmovies.model.ReviewResponse;
+import com.example.garbu.popularmovies.model.VideoResponse;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -18,6 +20,16 @@ public interface MovieInterface {
     @GET("movie/{preference}")
     Call<MovieResponse> getMovies(@Path("preference") String preference,
                                   @Query("api_key") String apiKey);
+
+    //get trailers
+    @GET("movie/{id}/videos")
+    Call<VideoResponse> getVideos(@Path("id") int id,
+                                  @Query("api_key") String apiKey);
+    //get reviews
+    @GET("movie/{id}/reviews")
+    Call<ReviewResponse> getReviews(@Path("id") int id,
+                                    @Query("api_key") String apiKey);
+
 
 
     Retrofit retrofit = new Retrofit.Builder()

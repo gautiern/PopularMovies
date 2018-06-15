@@ -12,7 +12,7 @@ import com.example.garbu.popularmovies.model.MovieResponse;
 /**
  * Created by garbu on 6/9/2018.
  */
-@Database(entities = {MovieResponse.class,Movie.class},version = 1, exportSchema = false)
+@Database(entities = {Movie.class},version = 1, exportSchema = false)
 public abstract class MovieDB extends RoomDatabase {
 
     private static final String LOG_TAG = MovieDB.class.getSimpleName();

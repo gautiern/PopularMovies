@@ -1,5 +1,6 @@
 package com.example.garbu.popularmovies.data;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -9,6 +10,7 @@ import android.arch.persistence.room.Update;
 
 import com.example.garbu.popularmovies.model.Movie;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**

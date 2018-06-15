@@ -19,6 +19,8 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
     private List<Movie> movieList;
     private final MovieAdapterOnClickHandler mClickHandler;
+    public static final String mTMDBBaseUrl = "http://image.tmdb.org/t/p/";
+    public static final String mPostersize = "w342";
 
     public interface MovieAdapterOnClickHandler {
         void onClick(int position);
@@ -44,6 +46,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
         }
     }
+    public void setMovies(List<Movie> movies) {
+        movieList = movies;
+        notifyDataSetChanged();
+    }
 
     public MovieAdapter(List<Movie> movieData, MovieAdapterOnClickHandler clickHandler) {
         movieList = movieData;
@@ -67,9 +73,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
         //load poster with Picasso
         Picasso.with(context)
-                .load(movie.getPosterPath())
+                .load(mTMDBBaseUrl + mPostersize + movie.getPosterPath())
                 .into(holder.moviePoster);
     }
+
 
     @Override
     public int getItemCount() {

@@ -3,11 +3,13 @@ package com.example.garbu.popularmovies.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.util.Log;
 
 import com.example.garbu.popularmovies.MainActivity;
 import com.example.garbu.popularmovies.R;
+import com.example.garbu.popularmovies.data.MovieTypeConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import java.text.SimpleDateFormat;
@@ -19,10 +21,8 @@ import java.util.Date;
  * Referenced tutorial on Retrofit/GSON mapping
  * URL: https://code.tutsplus.com/tutorials/getting-started-with-retrofit-2--cms-27792
  */
-@Entity //(tableName = "movies")
+@Entity
 public class Movie {
-//    @PrimaryKey(autoGenerate = true)
-//    private int id;
     @PrimaryKey
     @SerializedName("id")
     @Expose
@@ -46,6 +46,9 @@ public class Movie {
     @Expose
     private String mReleaseDate;
 
+    //Empty Constructor
+    public Movie(){}
+
     //Movie setters and getters
 
     public int getMovieID() {
@@ -68,17 +71,21 @@ public class Movie {
 
     public String getPosterPath() {
 
-        String baseTMDBURL = "http://image.tmdb.org/t/p/";
-        String posterSize = "w342";
+     //   String baseTMDBURL = "http://image.tmdb.org/t/p/";
+     //   String posterSize = "w342";
+
  //       if (landscape){
             //get larger poster size for landscape
- //           posterSize = context.getResources().getString(R.string.large_poster_size);
+  //      String posterSize = context.getResources().getString(R.string.large_poster_size);
+ //       String baseTMDBURL = context.getResources().getString(R.string.tmdb_base_url);
+         //   posterSize = context.getResources().getString(R.string.large_poster_size);
     //    }
-        return baseTMDBURL + posterSize + mPosterPath;
+        return mPosterPath;
 
     }
 
     public void setPosterPath(String posterPath) {
+
         this.mPosterPath = posterPath;
     }
 

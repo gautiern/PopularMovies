@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,16 +17,16 @@ import java.util.List;
 public class MovieTypeConverter {
 
     @TypeConverter
-    public static List<Movie> stringToMovies(String json){
+    public static ArrayList<Movie> stringToMovies(String json){
         Gson gson = new Gson();
-        Type type = new TypeToken<List<Movie>>() {}.getType();
-        List<Movie> movies = gson.fromJson(json, type);
+        Type type = new TypeToken<ArrayList<Movie>>() {}.getType();
+        ArrayList<Movie> movies = gson.fromJson(json, type);
         return movies;
     }
     @TypeConverter
-    public static String moviesToString(List<Movie> list){
+    public static String moviesToString(ArrayList<Movie> list){
         Gson gson = new Gson();
-        Type type = new TypeToken<List<Movie>>(){}.getType();
+        Type type = new TypeToken<ArrayList<Movie>>(){}.getType();
         String json = gson.toJson(list,type);
         return json;
     }

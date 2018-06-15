@@ -8,6 +8,7 @@ import com.example.garbu.popularmovies.data.MovieTypeConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,10 +16,10 @@ import java.util.List;
  *  * Referenced tutorial on GSON mapping
  * URL: https://code.tutsplus.com/tutorials/getting-started-with-retrofit-2--cms-27792
  */
-@Entity //(tableName = "movieResponse")
-@TypeConverters(MovieTypeConverter.class)
+//@Entity //(tableName = "movieResponse")
+//@TypeConverters(MovieTypeConverter.class)
 public class MovieResponse {
-    @PrimaryKey
+//    @PrimaryKey
     @SerializedName("page")
     @Expose
     private Integer page;
