@@ -19,39 +19,51 @@ import java.util.List;
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
     private List<Video> mVideos = new ArrayList<>();
+    private final TrailerAdapterOnClickHandler mClickHandler;
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public interface TrailerAdapterOnClickHandler {
+        void onClick(int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView icon;
         public TextView trailerTitle;
+        final TrailerAdapterOnClickHandler trailerAdapterOnClickHandler;
 
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, TrailerAdapterOnClickHandler clickHandler) {
             super(itemView);
             icon = itemView.findViewById(R.id.playIconIV);
             trailerTitle = itemView.findViewById(R.id.titleTV);
+            trailerAdapterOnClickHandler = clickHandler;
+            itemView.setOnClickListener(this);
+        }
+        @Override
+        public void onClick(View view) {
+            //pass position for trailer clicked
+            int adapterPosition = getAdapterPosition();
+            mClickHandler.onClick(adapterPosition);
+
+
         }
     }
-    public  TrailerAdapter(List<Video> videos) {
-        //mVideos = videos;
+    public  TrailerAdapter(List<Video> videos, TrailerAdapterOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
         //loop to only add Trailers
- //       for (int i = 0; i < videos.size(); i++) {
-  //          Video video = videos.get(i);
-  //          if (!video.getType().equals("Trailer")) {
-  //              videos.remove(i);
-  //          }
-
-  //      }
+        /*
         for(Video video : videos){
             if (video.getType().equals("Trailer")) {
             mVideos.add(video);
             }
         }
+        */
+        mVideos = videos;
     }
     @Override
     public TrailerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.trailer_layout, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view,mClickHandler);
         return viewHolder;
     }
 

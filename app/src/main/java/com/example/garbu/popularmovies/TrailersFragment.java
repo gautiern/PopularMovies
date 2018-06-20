@@ -1,6 +1,8 @@
 package com.example.garbu.popularmovies;
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,8 +31,9 @@ import static com.example.garbu.popularmovies.MainActivity.API_KEY;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TrailersFragment extends Fragment {
+public class TrailersFragment extends Fragment implements TrailerAdapter.TrailerAdapterOnClickHandler{
     private int mMovieId;
+    private List<Video> videos;
     private RecyclerView mTrailersRV;
     private TrailerAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -68,7 +71,6 @@ public class TrailersFragment extends Fragment {
     }
 
     public void getTrailers(){
-        String trailerType="Trailer";
         MovieInterface movieInterface = MovieInterface.retrofit.create(MovieInterface.class);
         Call<VideoResponse> call = movieInterface.getVideos(mMovieId, API_KEY);
         //make an asynchronous API call to the movie database
@@ -76,11 +78,11 @@ public class TrailersFragment extends Fragment {
             @Override
             public void onResponse(Call<VideoResponse> call, Response<VideoResponse> response) {
                 if (response.isSuccessful()) {
-                    List<Video> videos = response.body().getResults();
-                    mAdapter = new TrailerAdapter(videos);
+                    videos = response.body().getResults();
+                    mAdapter = new TrailerAdapter(videos,TrailersFragment.this);
                     mTrailersRV.setAdapter(mAdapter);
                     mTrailersRV.setHasFixedSize(true);
-                    Log.d("DetailActivity", "Number of reviews received: " + videos.size());
+                    Log.d("DetailActivity", "Number of trailers received: " + videos.size());
                 } else {
                     int statusCode = response.code();
                     Log.e("DetailActivity", "API request returned Status Code: " + statusCode);
@@ -96,5 +98,19 @@ public class TrailersFragment extends Fragment {
         });
 
     }
+    public void playTrailer(String key ){
+        //method to play selected trailer
+        String trailerKey = key;
+        if(trailerKey!= null){
+            Intent trailerIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
+            startActivity(trailerIntent);
+        }
+    }
 
+    @Override
+    public void onClick(int position) {
+        String videoKey = videos.get(position).getKey();
+        playTrailer(videoKey);
+
+    }
 }

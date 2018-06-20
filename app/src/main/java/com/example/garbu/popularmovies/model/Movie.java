@@ -5,6 +5,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.example.garbu.popularmovies.MainActivity;
@@ -22,7 +24,7 @@ import java.util.Date;
  * URL: https://code.tutsplus.com/tutorials/getting-started-with-retrofit-2--cms-27792
  */
 @Entity
-public class Movie {
+public class Movie implements Parcelable{
     @PrimaryKey
     @SerializedName("id")
     @Expose
@@ -67,28 +69,10 @@ public class Movie {
         this.mVoteAverage = voteAverage;
     }
 
- //   public String getPosterPath(){return mPosterPath;}
 
-    public String getPosterPath() {
+    public String getPosterPath() {return mPosterPath;}
 
-     //   String baseTMDBURL = "http://image.tmdb.org/t/p/";
-     //   String posterSize = "w342";
-
- //       if (landscape){
-            //get larger poster size for landscape
-  //      String posterSize = context.getResources().getString(R.string.large_poster_size);
- //       String baseTMDBURL = context.getResources().getString(R.string.tmdb_base_url);
-         //   posterSize = context.getResources().getString(R.string.large_poster_size);
-    //    }
-        return mPosterPath;
-
-    }
-
-    public void setPosterPath(String posterPath) {
-
-        this.mPosterPath = posterPath;
-    }
-
+    public void setPosterPath(String posterPath) {this.mPosterPath = posterPath;}
 
     public String getOriginalTitle() {
         return mOriginalTitle;
@@ -99,14 +83,6 @@ public class Movie {
     }
 
     public String getBackdropPath (){return mBackdropPath;}
-/*
-    public String getBackdropPath(Context context) {
-        //return backdrop image
-        String baseTMDBURL = context.getResources().getString(R.string.tmdb_base_url);
-        String backdropSize = context.getResources().getString(R.string.large_poster_size);
-        return baseTMDBURL + backdropSize + mBackdropPath;
-    }
-    */
 
     public void setBackdropPath(String backdropPath) {
         this.mBackdropPath = backdropPath;
@@ -143,4 +119,43 @@ public class Movie {
         this.mReleaseDate = releaseDate;
     }
 
+    //Parcelable methods
+    //Referred to example project: https://github.com/udacity/android-custom-arrayadapter/tree/parcelable
+
+
+    public Movie(Parcel in) {
+        mOriginalTitle = in.readString();
+        mPosterPath = in.readString();
+        mBackdropPath = in.readString();
+        mOverview = in.readString();
+        mVoteAverage = (Double) in.readValue(Double.class.getClassLoader());
+        mReleaseDate = in.readString();
+        mMovieID = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mOriginalTitle);
+        parcel.writeString(mPosterPath);
+        parcel.writeString(mBackdropPath);
+        parcel.writeString(mOverview);
+        parcel.writeValue(mVoteAverage);
+        parcel.writeString(mReleaseDate);
+        parcel.writeValue(mMovieID);
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel parcel) {
+            return new Movie(parcel);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

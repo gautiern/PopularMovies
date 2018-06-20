@@ -2,6 +2,7 @@ package com.example.garbu.popularmovies;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,29 +31,34 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     //Set API_KEY in gradle.properties
     public  static final String API_KEY = BuildConfig.TMDB_API_KEY;
     public String sortPreference;
-    public static List<Movie> movies = new ArrayList<>();
+    public static List<Movie> mMovies = new ArrayList<>();
+    public static List<Movie> mFavorites = new ArrayList<>();
     private RecyclerView movieGridRV;
     private MovieAdapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.LayoutManager mLayoutManager;
     private MovieDB mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setupViewModel();
+
         setContentView(R.layout.activity_main);
         movieGridRV = findViewById(R.id.moviesRV);
-        layoutManager = new GridLayoutManager(this, 3);
-        movieGridRV.setLayoutManager(layoutManager);
+        mLayoutManager = new GridLayoutManager(this, 3);
+        movieGridRV.setLayoutManager(mLayoutManager);
         mDb = MovieDB.getInstance(getApplicationContext());
         //setup Shared Prefs for settings
         setupSharedPrefs();
-        mAdapter = new MovieAdapter(movies, MainActivity.this);
+        mAdapter = new MovieAdapter(mMovies);
         movieGridRV.setAdapter(mAdapter);
         movieGridRV.setHasFixedSize(true);
+        requestMovies();
+
 
     }
 
@@ -67,8 +73,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     protected void onResume() {
         super.onResume();
-        requestMovies();
+        //setupViewModel();
+        //requestMovies();
+        Log.d("MainActivity", "OnResume Favorites: " +mFavorites);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -88,39 +97,29 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(int position) {
-        //when a movie poster is clicked, launch the details activity
-        Intent intentToStartDetailActivity = new Intent(this, MovieDetails.class);
-        intentToStartDetailActivity.putExtra("position", position);
-        startActivity(intentToStartDetailActivity);
+    private void setupViewModel(){
 
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getFavorites().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                Log.d("MainActivity", "Getting Favorites from LiveData in ViewModel - " + movies.size());
+                //mMovies = movies;
+                mAdapter.setMovies(movies);
+
+            }
+
+        });
     }
-
 
     private void requestMovies() {
         // requestMovies method
         //DB call for favorites
         if (sortPreference.equals(getString(R.string.pref_favorites))) {
-
-            Log.d("MainActivity", "Getting favorites from DataBase");
-
-            AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    movies.clear();
-                    movies = mDb.movieDao().loadMovies();
-                    // We will be able to simplify this once we learn more
-                    // about Android Architecture Components
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAdapter.setMovies(movies);
-                            Log.d("MainActivity", "Number of movies received: " + movies.size());
-                        }
-                    });
-                }
-            });
+            Log.d("MainActivity", "RequestMovies Favorites: " +mFavorites);
+            //mMovies = mFavorites;
+            //mAdapter.setMovies(mMovies);
+            setupViewModel();
 
         } else {
            // perform the API query to load the movies into the Movie object
@@ -137,9 +136,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 @Override
                 public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                     if (response.isSuccessful()) {
-                        movies = response.body().getResults();
-                        mAdapter.setMovies(movies);
-                        Log.d("MainActivity", "Number of movies received: " + movies.size());
+                        mMovies.clear();
+                        mMovies = response.body().getResults();
+                        mAdapter.setMovies(mMovies);
+                        Log.d("MainActivity", "Number of movies received: " + mMovies.size());
                     } else {
                         int statusCode = response.code();
                         Log.e("MainActivity", "API request returned Status Code: " + statusCode);
@@ -175,6 +175,5 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         }
     }
-
 
 }

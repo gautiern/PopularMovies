@@ -1,7 +1,10 @@
 package com.example.garbu.popularmovies;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,7 +43,7 @@ public class MovieDetails extends AppCompatActivity {
     private TextView mReleaseDate;
     private MovieDB mDb;
     private Movie movie;
-    private List<Movie> favorites = new ArrayList<>();
+    private List<Movie> mFavorites = new ArrayList<>();
     private static final String mTMDBBaseUrl = "http://image.tmdb.org/t/p/";
     private static final String mPosterSize = "w342";
     private static final String mBackdropSize = "w500";
@@ -62,8 +65,8 @@ public class MovieDetails extends AppCompatActivity {
         mReleaseDate = findViewById(R.id.releaseDateTV);
 
         if (bundle != null) {
-            int position = bundle.getInt("position");
-            movie = MainActivity.movies.get(position);
+            movie  = bundle.getParcelable("PopularMovies");
+            //movie = MainActivity.mMovies.get(position);
 
             //load trailers fragment
             FragmentTransaction trailerFT = getSupportFragmentManager().beginTransaction();
@@ -104,7 +107,7 @@ public class MovieDetails extends AppCompatActivity {
 
         }
         readFavorites();
-        updateFavorite();
+ //       updateFavorite();
        // getReviews();
 
     }
@@ -114,8 +117,8 @@ public class MovieDetails extends AppCompatActivity {
             public void run() {
                     // insert new task
                 boolean isFavorite = false;
-                for (int i=0;i<favorites.size();i++){
-                    if (favorites.get(i).getMovieID()==movie.getMovieID()) {
+                for (int i=0;i<mFavorites.size();i++){
+                    if (mFavorites.get(i).getMovieID()==movie.getMovieID()) {
                         isFavorite = true;
                     }
                 }
@@ -128,19 +131,34 @@ public class MovieDetails extends AppCompatActivity {
                     mDb.movieDao().insertMovie(movie);
 
                 }
-                readFavorites();
+                //readFavorites();
             }
         });
     }
     public void readFavorites(){
+        /*
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                // insert new task
+                // read favorites
                 favorites = mDb.movieDao().loadMovies();
 
             }
         });
+        */
+
+        Log.d("MainActivity", "Getting favorites from DataBase");
+        //final LiveData<List<Movie>> favorites = mDb.movieDao().loadMovies();
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getFavorites().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                Log.d("MainActivity", "Getting update from LiveData");
+                mFavorites = movies;
+
+            }
+        });
+
         }
 
 }

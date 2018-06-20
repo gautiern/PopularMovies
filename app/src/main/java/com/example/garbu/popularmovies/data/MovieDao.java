@@ -20,7 +20,7 @@ import java.util.List;
 public interface MovieDao {
 
     @Query("SELECT * FROM Movie")
-    List<Movie> loadMovies();
+    LiveData<List<Movie>> loadMovies();
 
     @Insert
     void insertMovie(Movie movie);
